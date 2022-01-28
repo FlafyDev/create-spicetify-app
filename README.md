@@ -1,0 +1,1 @@
+# create-spicetify-app
