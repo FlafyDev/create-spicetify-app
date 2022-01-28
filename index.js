@@ -63,12 +63,12 @@ inquirer.prompt(questions).then(async (answers) => {
   if (answers['example']) {
     let settings;
     if (answers['type'] === "extension") {
-      await fs.copy(__dirname, 'extension-template', path.join(projectDir, 'src'));
+      await fs.copy(path.join(__dirname, 'extension-template'), path.join(projectDir, 'src'));
       settings = {
         nameId: answers['nameId']
       }
     } else {
-      await fs.copy(__dirname, 'customapp-template', path.join(projectDir, 'src'));
+      await fs.copy(path.join(__dirname, 'customapp-template'), path.join(projectDir, 'src'));
       settings = {
         displayName: answers['displayName'],
         nameId: answers['nameId'],
