@@ -5,10 +5,10 @@ import download from 'download-git-repo'
 import fs from 'fs-extra';
 import chalk from 'chalk'
 import path from 'path/posix';
+import { fileURLToPath } from 'url'
 
-console.log(process.cwd(0))
-
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 const questions = [
   {
@@ -57,18 +57,18 @@ const questions = [
 ];
 
 inquirer.prompt(questions).then(async (answers) => {
-  const projectDir = path.join(__dirname, answers['nameId'])
+  const projectDir = path.join(".", answers['nameId'])
   await new Promise((resolve, reject) => download("FlafyDev/spicetify-creator", projectDir, undefined, (err) => resolve()))
   
   if (answers['example']) {
     let settings;
     if (answers['type'] === "extension") {
-      await fs.copy('./extension-template', path.join(projectDir, 'src'));
+      await fs.copy(__dirname, 'extension-template', path.join(projectDir, 'src'));
       settings = {
         nameId: answers['nameId']
       }
     } else {
-      await fs.copy('./customapp-template', path.join(projectDir, 'src'));
+      await fs.copy(__dirname, 'customapp-template', path.join(projectDir, 'src'));
       settings = {
         displayName: answers['displayName'],
         nameId: answers['nameId'],
