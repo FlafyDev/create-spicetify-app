@@ -1,0 +1,16 @@
+{
+  "name": "create-spicetify-app",
+  "version": "1.0.1",
+  "description": "Generates a spicetify-creator project",
+  "type": "module",
+  "main": "index.js",
+  "bin": "./index.js",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "download-git-repo": "^3.0.2",
+    "fs-extra": "^10.0.0",
+    "inquirer": "^8.2.0"
+  }
+}
