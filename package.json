@@ -1,6 +1,6 @@
 {
   "name": "create-spicetify-app",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Generates a spicetify-creator project",
   "type": "module",
   "main": "index.js",
