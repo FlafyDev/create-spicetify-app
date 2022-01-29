@@ -7,8 +7,8 @@ import chalk from 'chalk'
 import path from 'path/posix';
 import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url).replace(/\\/g,"/");
+const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
 
 const questions = [
   {
