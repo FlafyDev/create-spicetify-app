@@ -58,25 +58,32 @@ const questions = [
 
 inquirer.prompt(questions).then(async (answers) => {
   const projectDir = path.join(".", answers['nameId'])
-  await new Promise((resolve, reject) => download("FlafyDev/spicetify-creator", projectDir, undefined, (err) => resolve()))
+  try {
+    await new Promise((resolve, reject) => download("FlafyDev/spicetify-creator", projectDir, undefined, (err) => {
+      if (err) reject();
+      resolve();
+    }));
+    
+    if (answers['example']) {
+      let settings;
+      if (answers['type'] === "extension") {
+        await fs.copy(path.join(__dirname, 'extension-template'), path.join(projectDir, 'src'));
+        settings = {
+          nameId: answers['nameId']
+        }
+      } else {
+        await fs.copy(path.join(__dirname, 'customapp-template'), path.join(projectDir, 'src'));
+        settings = {
+          displayName: answers['displayName'],
+          nameId: answers['nameId'],
+          icon: "css/icon.svg",
+          activeIcon: "css/icon.svg",
+        }
+      }
   
-  if (answers['example']) {
-    let settings;
-    if (answers['type'] === "extension") {
-      await fs.copy(path.join(__dirname, 'extension-template'), path.join(projectDir, 'src'));
-      settings = {
-        nameId: answers['nameId']
-      }
-    } else {
-      await fs.copy(path.join(__dirname, 'customapp-template'), path.join(projectDir, 'src'));
-      settings = {
-        displayName: answers['displayName'],
-        nameId: answers['nameId'],
-        icon: "css/icon.svg",
-        activeIcon: "css/icon.svg",
-      }
+      await fs.writeFile(path.join(projectDir, 'settings.json'), JSON.stringify(settings, null, 2));
     }
-
-    await fs.writeFile(path.join(projectDir, 'settings.json'), JSON.stringify(settings, null, 2));
+  } catch(err) {
+    console.error('Something went wrong: ', err);
   }
 });
