@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import chalk from 'chalk'
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url).replace(/\\/g,"/");
 const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
@@ -83,6 +84,11 @@ inquirer.prompt(questions).then(async (answers) => {
   
       await fs.writeFile(path.join(projectDir, 'settings.json'), JSON.stringify(settings, null, 2));
     }
+
+    const usingYarn = (process.env.npm_config_user_agent || '').indexOf('yarn') === 0;
+    const installDepsCommand = usingYarn ? 'yarn' : 'npm install';
+
+    spawn(`cd ${projectDir} && ${installDepsCommand}`, { stdio: 'inherit', shell: true });
   } catch(err) {
     console.error('Something went wrong: ', err);
   }
