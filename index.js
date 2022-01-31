@@ -4,8 +4,8 @@ import inquirer from 'inquirer'
 import download from 'download-git-repo'
 import fs from 'fs-extra';
 import chalk from 'chalk'
-import path from 'path/posix';
-import { fileURLToPath } from 'url'
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url).replace(/\\/g,"/");
 const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
