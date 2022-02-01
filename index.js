@@ -6,6 +6,7 @@ import fs from 'fs-extra';
 import chalk from 'chalk'
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 
 const __filename = fileURLToPath(import.meta.url).replace(/\\/g,"/");
 const __dirname = __filename.substring(0, __filename.lastIndexOf('/'));
@@ -58,25 +59,37 @@ const questions = [
 
 inquirer.prompt(questions).then(async (answers) => {
   const projectDir = path.join(".", answers['nameId'])
-  await new Promise((resolve, reject) => download("FlafyDev/spicetify-creator", projectDir, undefined, (err) => resolve()))
+  try {
+    await new Promise((resolve, reject) => download("FlafyDev/spicetify-creator", projectDir, undefined, (err) => {
+      if (err) reject();
+      resolve();
+    }));
+    
+    if (answers['example']) {
+      let settings;
+      if (answers['type'] === "extension") {
+        await fs.copy(path.join(__dirname, 'extension-template'), path.join(projectDir, 'src'));
+        settings = {
+          nameId: answers['nameId']
+        }
+      } else {
+        await fs.copy(path.join(__dirname, 'customapp-template'), path.join(projectDir, 'src'));
+        settings = {
+          displayName: answers['displayName'],
+          nameId: answers['nameId'],
+          icon: "css/icon.svg",
+          activeIcon: "css/icon.svg",
+        }
+      }
   
-  if (answers['example']) {
-    let settings;
-    if (answers['type'] === "extension") {
-      await fs.copy(path.join(__dirname, 'extension-template'), path.join(projectDir, 'src'));
-      settings = {
-        nameId: answers['nameId']
-      }
-    } else {
-      await fs.copy(path.join(__dirname, 'customapp-template'), path.join(projectDir, 'src'));
-      settings = {
-        displayName: answers['displayName'],
-        nameId: answers['nameId'],
-        icon: "css/icon.svg",
-        activeIcon: "css/icon.svg",
-      }
+      await fs.writeFile(path.join(projectDir, 'settings.json'), JSON.stringify(settings, null, 2));
     }
 
-    await fs.writeFile(path.join(projectDir, 'settings.json'), JSON.stringify(settings, null, 2));
+    const usingYarn = (process.env.npm_config_user_agent || '').indexOf('yarn') === 0;
+    const installDepsCommand = usingYarn ? 'yarn' : 'npm install';
+
+    spawn(`cd ${projectDir} && ${installDepsCommand}`, { stdio: 'inherit', shell: true });
+  } catch(err) {
+    console.error('Something went wrong: ', err);
   }
 });
